@@ -20,8 +20,8 @@ let client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: tr
  client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: true });
 
     client.connect(err => {
-        const collection = client.db("onlineStore").collection("products");
-        collection.find().limit(10).toArray((err,documents)=>{
+        const collection = client.db("hotOnion").collection("allProducts");
+        collection.find().toArray((err,documents)=>{
             if (err) {
                 console.log(err);
                 res.status(500).send({message:err});
@@ -40,7 +40,7 @@ app.post('/getProductsByKey',(req, res)=>{
     client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: true });
    
        client.connect(err => {
-           const collection = client.db("onlineStore").collection("products");
+           const collection = client.db("hotOnion").collection("allProducts");
            collection.find({key:{$in:productKeys}}).toArray((err,documents)=>{
                if (err) {
                    console.log(err);
@@ -59,7 +59,7 @@ app.get('/product/:key',(req, res)=>{
     client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: true });
    
        client.connect(err => {
-           const collection = client.db("onlineStore").collection("products");
+           const collection = client.db("hotOnion").collection("allProducts");
            collection.find({key:key}).toArray((err,documents)=>{
                if (err) {
                    console.log(err);
@@ -82,7 +82,7 @@ app.get('/product/:key',(req, res)=>{
     client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
     
     client.connect(error => {
-        const collection = client.db("onlineStore").collection("orders");
+        const collection = client.db("hotOnion").collection("allProducts");
         collection.insertOne(orderInfo ,(err,result)=>{
             if (err) {
                 console.log(err);
@@ -96,21 +96,20 @@ app.get('/product/:key',(req, res)=>{
       });
 });
 // //post request
-app.post('/addProduct',(req,res)=>{
+app.post('/addAllProducts',(req,res)=>{
     //save to database
     const product = req.body;
     client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
     
     client.connect(error => {
-        const collection = client.db("onlineStore").collection("products");
+        const collection = client.db("hotOnion").collection("allProducts");
         collection.insert(product ,(err,result)=>{
             if (err) {
                 console.log(err);
                 res.status(500).send({message:err});
             }
            else{
-          console.log("Database Connected");
-          
+            console.log("Database Connected");
             res.send(result.ops[0]); 
            }  
         });

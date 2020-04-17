@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <title>MongoDb Client</title>
+</head>
+<body>
+    <div class="container">
+        <div class="border border-primary">
+            <h1>Mongo</h1>
+            <p id="username"></p>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <input type="text" class="form-control w-25 m-2" id="name" placeholder="enter product name"/>
+            <input type="text" class="form-control w-25 m-2" id="price" placeholder="enter price"/>
+            <input type="text" class="form-control w-25 m-2" id="stock" placeholder="enter stock amount"/>
+            <button class="btn-primary" id="addProduct">Add User</button>
+        </div>
+        <p class="d-none text-success" id="successMsg">
+            <small>Product Added Successful</small>
+        </p>
+        <ul id="product-list">
+
+        </ul>
+    </div>
+    <script>
+        fetch('http://localhost:5200/products')
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data);
+            
+            displayProducts(data);
+        });
+        function displayProducts(data){
+            const productContainer = document.getElementById('product-list');
+           data.map(product=>{
+             appendProduct(product,productContainer);
+           })
+        }
+        const appendProduct=(product,productContainer)=>{
+            const item = document.createElement('li');
+             item.innerText = `Product Name = ${product.name}, Product price = $${product.price}`;
+               productContainer.appendChild(item);
+        }
+        //post data to the server
+       const btnData=  document.getElementById('addProduct');
+       btnData.addEventListener('click',()=>{
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            const stock = document.getElementById('stock').value;
+            const product = {name,price,stock};
+           // console.log(product);
+        fetch('http://localhost:5200/addProduct',{
+            method:'POST',
+            body:JSON.stringify(product),
+            headers:{
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        })
+        .then(res=>res.json())
+        .then(data=> {
+            updateProduct(data);
+            
+            //success msg
+            const success = document.getElementById('successMsg');
+            success.style.display='block';
+            setTimeout(() => {
+                success.style.display='none';
+            }, 5000);
+            document.getElementById('name').value='';
+            document.getElementById('price').value='';
+            document.getElementById('stock').value='';
+
+        })
+    })
+        const updateProduct =product=>{ 
+            const productContainer = document.getElementById('product-list');
+            appendProduct(product,productContainer);
+            document.getElementById('username').innerText=product.name;
+        }
+    
+    </script>
+</body>
+</html>
