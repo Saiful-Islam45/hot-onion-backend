@@ -10,8 +10,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 //database related information
-
-//const uri = "mongodb+srv://dbUser:password6356@cluster0-gsq7r.mongodb.net/test?retryWrites=true&w=majority";
 const uri = process.env.DB_PATH;
 let client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: true });
 
@@ -33,45 +31,26 @@ let client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: tr
         //client.close();
       });
 })
-//review items
-app.post('/getProductsByKey',(req, res)=>{
-    const key = req.params.key;
-    const productKeys = req.body;
-    client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: true });
-   
-       client.connect(err => {
-           const collection = client.db("hotOnion").collection("allProducts");
-           collection.find({key:{$in:productKeys}}).toArray((err,documents)=>{
-               if (err) {
-                   console.log(err);
-                   res.status(500).send({message:err});
-               }
-              else{
-               res.send(documents); 
-              }  
-           });
-           //client.close();
-         });
-   })
 //single product details by id
-app.get('/product/:key',(req, res)=>{
-    const key = req.params.key;
+app.get('/products/:id',(req, res)=>{
     client = new MongoClient(uri, { useNewUrlParser: true,useUnifiedTopology: true });
    
-       client.connect(err => {
-           const collection = client.db("hotOnion").collection("allProducts");
-           collection.find({key:key}).toArray((err,documents)=>{
-               if (err) {
-                   console.log(err);
-                   res.status(500).send({message:err});
-               }
-              else{
-               res.send(documents[0]); 
-              }  
-           });
-           //client.close();
-         });
-   })
+    const id = Number(req.params.id);
+    
+    client.connect(err => {
+        const collection = client.db("hotOnion").collection("allProducts");
+        collection.find({id:id}).toArray((err,documents)=>{
+            if (err) {
+                console.log(err);
+                res.status(500).send({message:err});
+            }
+            else{
+            res.send(documents[0]); 
+            }  
+        });
+        //client.close();
+        });
+})
    //oder placed
    app.post('/placeOrder',(req,res)=>{
     const orderInfo = req.body;
