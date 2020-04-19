@@ -61,8 +61,8 @@ app.get('/products/:id',(req, res)=>{
     client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
     
     client.connect(error => {
-        const collection = client.db("hotOnion").collection("allProducts");
-        collection.insertOne(orderInfo ,(err,result)=>{
+        const collection = client.db("hotOnion").collection("orders");
+        collection.insert(orderInfo ,(err,result)=>{
             if (err) {
                 console.log(err);
                 res.status(500).send({message:err});
@@ -76,7 +76,7 @@ app.get('/products/:id',(req, res)=>{
 });
 // //post request
 app.post('/addAllProducts',(req,res)=>{
-    //save to database
+    //data save to database
     const product = req.body;
     client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
     
